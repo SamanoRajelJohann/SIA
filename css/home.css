@@ -61,10 +61,12 @@ body::before {
     width: calc(100% - 270px);
     display: flex;
     flex-direction: column;
-    align-items: center;
     height: 100vh;
     overflow: auto;
     position: relative;
+    justify-content: flex-start; /* Keeps content at the top */
+    align-items: flex-end; /* Moves content to the right */
+    text-align: right; /* Aligns text to the right */
 }
 
 /* Style for the image in the sidebar */

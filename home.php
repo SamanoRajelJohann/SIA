@@ -28,7 +28,7 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
 <!-- Main content -->
 <div class="content">
     <h2>Welcome to Employee Management System</h2>
-    <h3>Here you can manage your employees efficiently.</h3>
+    <h3>Here you can manage your employees efficiently</h3>
     
 </div> <!-- content -->
 
