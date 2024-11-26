@@ -2,21 +2,24 @@
 // Database connection
 include_once("dbconnection.php");
 
-// Check if the form has been submitted
-if (isset($_POST['submit'])) {
-    $employee_id = $_POST['employee_id'];
-    $status = $_POST['status'];
+// When form is submitted, save the attendance
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $date = $_POST['date'];
 
-    // Insert the attendance record into the database
-    $query = "INSERT INTO attendance (employee_id, date, status) VALUES ('$employee_id', '$date', '$status')";
-    $result = mysqli_query($conn, $query);
+    foreach ($_POST['employee'] as $employee_id => $status) {
+        $present = isset($status['present']) ? 'Present' : 'Absent';
+        $late = isset($status['late']) ? 1 : 0;
+        $overtime = isset($status['overtime']) ? 1 : 0;
 
-    if ($result) {
-        $message = "Attendance logged successfully!";
-    } else {
-        $message = "Error: " . mysqli_error($conn);
+        // Insert into attendance table
+        $sql = "INSERT INTO attendance (employee_id, date, status, late, overtime)
+                VALUES ('$employee_id', '$date', '$present', '$late', '$overtime')
+                ON DUPLICATE KEY UPDATE status='$present', late='$late', overtime='$overtime'";
+
+        mysqli_query($conn, $sql);
     }
+
+    echo "Attendance saved successfully!";
 }
 ?>
 
@@ -26,81 +29,155 @@ if (isset($_POST['submit'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employee Attendance</title>
-    <link rel="stylesheet" href="css.css">
+    <link rel="stylesheet" href="css/home.css">
     <style>
-        body { font-family: Arial, sans-serif; }
-        .form-container { margin-bottom: 30px; }
-        .message { margin-bottom: 20px; color: green; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+            padding-top: 20px;
+        }
+        .sidebar img {
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 5px 0;
+        }
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .form-container {
+            margin-bottom: 30px;
+        }
+        .employee-list table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .employee-list th, .employee-list td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        .employee-list th {
+            background-color: black;
+            font-weight: bold;
+        }
+        .employee-list tr:hover {
+            background-color: #f1f1f1;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .form-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
+    <script>
+        // Function to count the statuses
+        function countStatus(status) {
+            let count = document.querySelectorAll('input[name*="' + status + '"]:checked').length;
+            document.getElementById(status + 'Count').innerText = count;
+        }
+
+        // Display selected date dynamically
+        function updateDate() {
+            let selectedDate = document.getElementById('attendanceDate').value;
+            document.getElementById('displayDate').innerText = selectedDate;
+        }
+    </script>
 </head>
 <body>
-    <h2>Log Employee Attendance</h2>
-    
-
-    <?php
-    // Display success or error message if set
-    if (isset($message)) {
-        echo "<p class='message'>$message</p>";
-    }
-    ?>
-
-    <!-- Attendance form -->
-    <div class="form-container">
-        <form action="" method="post">
-            <label for="employee_id">Employee:</label>
-            <select name="employee_id" required>
-                <?php
-                // Fetch all employees from the database
-                $result = mysqli_query($conn, "SELECT id, First_Name, Last_Name FROM employee");
-                while ($row = mysqli_fetch_assoc($result)) {
-                    echo "<option value='".$row['id']."'>".$row['First_Name']." ".$row['Last_Name']."</option>";
-                }
-                ?>
-            </select><br>
-
-            <label for="status">Attendance Status:</label>
-            <select name="status" required>
-                <option value="Present">Present</option>
-                <option value="Absent">Absent</option>
-                <option value="Late">Late</option>
-            </select><br>
-
-            <label for="date">Date:</label>
-            <input type="date" name="date" required><br>
-
-            <input type="submit" name="submit" value="Log Attendance">
-        </form>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <img src="img/LOGO.png" alt="Logo">
+        <a href="home.php">Home</a>
+        <a href="employee.php">Employees</a>
+        <a href="displayattendance.php">Attendance</a>
+        <a href="#">Reports</a>
+        <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
     </div>
 
-    <h2>Attendance Records</h2>
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Date Selector -->
+        <div class="form-container">
+            <form method="post" action="">
+                <label for="date">Select Date:</label>
+                <select id="attendanceDate" name="date" onChange="updateDate()" required>
+                    <?php
+                    // Loop for days of the month (e.g., 1 to 31)
+                    for ($i = 1; $i <= 31; $i++) {
+                        echo "<option value='" . date('Y-m-') . sprintf('%02d', $i) . "'>" . date('Y-m-') . sprintf('%02d', $i) . "</option>";
+                    }
+                    ?>
+                </select>
+                <p>Date Selected: <span id="displayDate"><?php echo date('Y-m-d'); ?></span></p>
 
-    <?php
-    // Fetch attendance data from the database
-    $query = "SELECT employee.First_Name, employee.Last_Name, attendance.date, attendance.status 
-              FROM attendance 
-              JOIN employee ON attendance.employee_id = employee.id 
-              ORDER BY attendance.date DESC";
-    $result = mysqli_query($conn, $query);
+                <!-- Employee List with Checkboxes for Attendance and Statuses -->
+                <div class="employee-list">
+                    <table>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Late</th>
+                            <th>Overtime</th>
+                        </tr>
+                        <?php
+                        // SQL query to fetch all employees from the database
+                        $result = mysqli_query($conn, "SELECT id, First_Name, Last_Name FROM employee");
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>";
+                            echo "<td>".$row['First_Name']." ".$row['Last_Name']."</td>";
+                            echo "<td><input type='radio' name='employee[".$row['id']."][present]' onClick='countStatus(\"present\")'></td>";
+                            echo "<td><input type='radio' name='employee[".$row['id']."][absent]' onClick='countStatus(\"absent\")'></td>";
+                            echo "<td><input type='radio' name='employee[".$row['id']."][late]' onClick='countStatus(\"late\")'></td>";
+                            echo "<td><input type='radio' name='employee[".$row['id']."][overtime]' onClick='countStatus(\"overtime\")'></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+                    </table>
+                </div>
 
-    if (mysqli_num_rows($result) > 0) {
-        echo "<table border='1'>
-                <tr>
-                  <th>Employee Name</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                </tr>";
+                <!-- Display total present, absent, late, and overtime counts -->
+                <p>Total Present: <span id="presentCount">0</span></p>
+                <p>Total Absent: <span id="absentCount">0</span></p>
+                <p>Total Late: <span id="lateCount">0</span></p>
+                <p>Total Overtime: <span id="overtimeCount">0</span></p>
 
-        while ($row = mysqli_fetch_assoc($result)) {
-            echo "<tr>";
-            echo "<td>" . $row['First_Name'] . " " . $row['Last_Name'] . "</td>";
-            echo "<td>" . $row['date'] . "</td>";
-            echo "<td>" . $row['status'] . "</td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-    } else {
-        echo "No attendance records found.";
-    }
-    ?>
+                <!-- Save Attendance Button -->
+                <button type="submit">Save Attendance</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

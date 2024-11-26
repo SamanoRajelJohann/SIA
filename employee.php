@@ -17,14 +17,14 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
 <body>
 
     <!-- Sidebar -->
-    <div class="sidebar">
-        <img src="img/LOGO.png" alt="Logo" style="width: 100%; height: auto; margin-bottom: 20px;">
-        <a href="home.php">Home</a>
-        <a href="employee.php">Employees</a>
-        <a href="#">Attendance</a>
-        <a href="#">Reports</a>
-        <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
-    </div>
+<div class="sidebar">
+    <img src="img/LOGO.png" alt="Logo" style="width: 100%; height: auto; margin-bottom: 20px;">
+    <a href="home.php">Home</a>
+    <a href="employee.php">Employees</a>
+    <a href="displayattendance.php">Attendance</a>
+    <a href="#">Reports</a>
+    <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
+</div>
 
     <!-- Main content -->
     <div class="content">
