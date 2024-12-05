@@ -10,14 +10,15 @@ addEmployee($conn);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Employee</title>
     <link rel="stylesheet" href="css/add.css">
+    <link rel="icon" type="image/png" href="img/LOGO.png">
 </head>
 <body>
     <div class="sidebar">
-        <img src="img/EMSLOGO.png" alt="Logo" style="width: 100%; height: auto; margin-bottom: 20px;">
+        <img src="img/LOGO.png" alt="Logo" style="width: 100%; height: auto; margin-bottom: 20px;">
         <a href="home.php">Home</a>
         <a href="employee.php">Employees</a>
-        <a href="#">Attendance</a>
-        <a href="#">Reports</a>
+        <a href="displayattendance.php">Attendance</a>
+        <a href="report.php">Reports</a>
         <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
     </div>
 
@@ -49,8 +50,8 @@ addEmployee($conn);
 
     <div class="form-group">
         <div class="form-field">
-            <label for="E-mail">Email:</label>
-            <input type="email" name="E-mail" required>
+            <label for="Email">Email:</label>
+            <input type="email" name="Email" required>
         </div>
     </div>
 
@@ -58,6 +59,13 @@ addEmployee($conn);
         <div class="form-field">
             <label for="Address">Address:</label>
             <textarea name="Address" required></textarea>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="form-field">
+            <label for="Salary">Salary:</label>
+            <input type="number" min="100"max="1000" name="Salary" required></>
         </div>
     </div>
 

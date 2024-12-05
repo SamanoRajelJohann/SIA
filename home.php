@@ -12,6 +12,7 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="css/home.css">
+    <link rel="icon" type="image/png" href="img/LOGO.png">
 </head>
 <body>
 
@@ -21,7 +22,7 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
     <a href="home.php">Home</a>
     <a href="employee.php">Employees</a>
     <a href="displayattendance.php">Attendance</a>
-    <a href="#">Reports</a>
+    <a href="report.php">Reports</a>
     <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
 </div>
 

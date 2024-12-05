@@ -50,11 +50,12 @@ function login($conn){
 function addEmployee($conn){
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $employee_id = $_POST['Employee_ID'];
-    $first_name = $_POST['First_Name'];
-    $last_name = $_POST['Last_Name'];
-    $age = $_POST['Age'];
-    $email = $_POST['E-mail'];
-    $address = $_POST['Address'];
+        $first_name = $_POST['First_Name'];
+        $last_name = $_POST['Last_Name'];
+        $age = $_POST['Age'];
+        $email = $_POST['Email'];
+        $address = $_POST['Address'];
+        $salary = $_POST['Salary'];
 
     // Handle image upload
     $target_dir = "img/"; // Directory to store images
@@ -66,8 +67,8 @@ function addEmployee($conn){
         // Upload the file
         if (move_uploaded_file($_FILES["employee_img"]["tmp_name"], $image_file)) {
             // Insert employee data along with image file name into the database
-            $query = "INSERT INTO employee (Employee_ID, First_Name, Last_Name, Age, `E-mail`, Address, Image) 
-                      VALUES ('$employee_id', '$first_name', '$last_name', '$age', '$email', '$address', '".basename($_FILES["employee_img"]["name"])."')";
+            $query = "INSERT INTO employee (Employee_ID, First_Name, Last_Name, Age, `Email`, Address, Salary, Image) 
+                      VALUES ('$employee_id', '$first_name', '$last_name', '$age', '$email', '$address', '$salary', '".basename($_FILES["employee_img"]["name"])."')";
 
             $result = mysqli_query($conn, $query);
             if ($result) {
@@ -87,7 +88,7 @@ function addEmployee($conn){
     }
 }
 
-function editEmployee($conn){
+function editEmployee($conn) {
     if (isset($_POST['update'])) {
         $id = mysqli_real_escape_string($conn, $_POST['id']);
         $employee_id = mysqli_real_escape_string($conn, $_POST['employee_id']);
@@ -96,45 +97,48 @@ function editEmployee($conn){
         $age = mysqli_real_escape_string($conn, $_POST['age']);
         $email = mysqli_real_escape_string($conn, $_POST['email']);
         $address = mysqli_real_escape_string($conn, $_POST['address']);
-    
-        if (empty($employee_id) || empty($first_name) || empty($last_name) || empty($age) || empty($email) || empty($address)) {
-            if (empty($employee_id)) {
-                echo "<font color='red'>Employee ID field is empty.</font><br/>";
-            }
-            if (empty($first_name)) {
-                echo "<font color='red'>First Name field is empty.</font><br/>";
-            }
-            if (empty($last_name)) {
-                echo "<font color='red'>Last Name field is empty.</font><br/>";
-            }
-            if (empty($age)) {
-                echo "<font color='red'>Age field is empty.</font><br/>";
-            }
-            if (empty($email)) {
-                echo "<font color='red'>Email field is empty.</font><br/>";
-            }
-            if (empty($address)) {
-                echo "<font color='red'>Address field is empty.</font><br/>";
+        $salary = mysqli_real_escape_string($conn, $_POST['salary']);
+        
+        // Collect error messages
+        $errors = [];
+        if (empty($employee_id)) $errors[] = "Employee ID field is empty.";
+        if (empty($first_name)) $errors[] = "First Name field is empty.";
+        if (empty($last_name)) $errors[] = "Last Name field is empty.";
+        if (empty($age) || !is_numeric($age)) $errors[] = "Age field is empty or invalid.";
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Invalid Email field.";
+        if (empty($address)) $errors[] = "Address field is empty.";
+        if (empty($salary) || !is_numeric($salary)) $errors[] = "Salary field is empty or invalid.";
+
+        if (!empty($errors)) {
+            foreach ($errors as $error) {
+                echo "<font color='red'>$error</font><br/>";
             }
         } else {
-            $result = mysqli_query($conn, "UPDATE employee SET 
-                Employee_ID = '$employee_id', 
-                First_Name = '$first_name', 
-                Last_Name = '$last_name', 
-                Age = '$age', 
-                `E-mail` = '$email', 
-                Address = '$address' 
-                WHERE id = '$id'");
-    
-            if ($result) {
+            // Use prepared statement
+            $stmt = $conn->prepare("UPDATE employee SET 
+                Employee_ID = ?, 
+                First_Name = ?, 
+                Last_Name = ?, 
+                Age = ?, 
+                `E-mail` = ?, 
+                Address = ?, 
+                Salary = ? 
+                WHERE id = ?");
+            $stmt->bind_param("sssisssi", $employee_id, $first_name, $last_name, $age, $email, $address, $salary, $id);
+
+            if ($stmt->execute()) {
                 echo "<p><font color='green'>Data updated successfully!</font></p>";
-                echo "<a href='home.php'>View Result</a>";
+                header("Location: home.php");
+                exit(); // Ensure no further processing occurs
             } else {
-                echo "<p><font color='red'>Error updating data: " . mysqli_error($conn) . "</font></p>";
+                echo "<p><font color='red'>Error updating data: " . $stmt->error . "</font></p>";
             }
+
+            $stmt->close();
         }
     }
 }
+
 
 function delEmployee($conn){
     $id = $_GET['id'];

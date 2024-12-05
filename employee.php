@@ -12,6 +12,7 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Employ Employee</title>
     <link rel="stylesheet" href="css/employee.css"> <!-- Link to external CSS -->
+    <link rel="icon" type="image/png" href="img/LOGO.png">
    
 </head>
 <body>
@@ -22,7 +23,7 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
     <a href="home.php">Home</a>
     <a href="employee.php">Employees</a>
     <a href="displayattendance.php">Attendance</a>
-    <a href="#">Reports</a>
+    <a href="report.php">Reports</a>
     <a href="index.php" onClick="return confirm('Are you sure you want to Logout?')">Log Out</a>
 </div>
 
@@ -47,8 +48,9 @@ $result = mysqli_query($conn, "SELECT * FROM employee ORDER BY Employee_ID ASC")
                 echo "<h2>".$res['First_Name']." ".$res['Last_Name']."</h2>";
                 echo "<p>Employee ID: ".$res['Employee_ID']."</p>";
                 echo "<p>Age: ".$res['Age']."</p>";
-                echo "<p>Email: ".$res['E-mail']."</p>";
+                echo "<p>Email: ".$res['Email']."</p>";
                 echo "<p>Address: ".$res['Address']."</p>";
+                echo "<p>Salary: ".$res['Salary']."</p>";
 
                 // Edit and Delete links
                 echo "<div class='employee-actions'>";
