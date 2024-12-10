@@ -38,101 +38,167 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Employee Attendance</title>
     <link rel="icon" type="image/png" href="img/LOGO.png">
     <style>
-        .form-container {
-            margin-bottom: 30px;
-        }
-        .employee-list table {
-            margin-right: 100px;
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .employee-list th, .employee-list td {
-            border: 1px solid #ddd;
-            padding: 20px;
-            
-        }
-        .employee-list th {
-            background-color: black;
-            font-weight: bold;
-        } 
-        /* Sidebar styling */
-        .sidebar {
-            width: 250px;
-            height: 100vh;
-            background-color: rgba(58, 74, 97, 0.9);
-            padding: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            margin-bottom: 10px;
-            text-align: left;
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        .sidebar a:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }  
-        .sidebar img {
-            border-radius: 10px; /* Add rounded corners to sidebar images */
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            color: white;
-            font-family: Arial, sans-serif;
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
-        html, body {
-            height: 100%;
-        }
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgb(94, 143, 157), rgb(43, 43, 98));
-            z-index: -1;
-        }
-        .content {
-            margin-left: 270px;
-            padding: 20px;
-            width: calc(100% - 270px);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: auto;
-            position: relative;
-            justify-content: flex-start; /* Keeps content at the top */
-            text-align: left; /* Aligns text to the right */
-        }
-        button {
-            padding: 10px 20px; /* Same padding for both buttons */
-            margin-top: 10px;
-            text-decoration: none;
-            color: white;
-            background-color: #0066CC;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-            width: 100px; /* Same width for both buttons */
-        }
-        button:hover {
-            background-color:#0153a5;
-        }
+       /* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    color: white;
+    height: 100vh;
+    display: flex;
+    background: linear-gradient(135deg, #607d8b, #3b1f5e);
+    overflow: hidden;
+}
+
+html, body {
+    height: 100%;
+}
+
+/* Background overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgb(94, 143, 157), rgb(43, 43, 98));
+    z-index: -1;
+}
+
+/* Sidebar styling */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: rgba(58, 74, 97, 0.9);
+    padding: 20px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar img {
+    border-radius: 10px; /* Add rounded corners to sidebar images */
+    margin-bottom: 30px;
+}
+
+.sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 15px;
+    margin-bottom: 15px;
+    text-align: left;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, padding-left 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding-left: 25px;
+}
+
+/* Content Section */
+.content {
+    margin-left: 270px;
+    padding: 20px;
+    width: calc(100% - 270px);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+    position: relative;
+    justify-content: flex-start;
+    border-radius: 10px;
+}
+
+/* Form Styling */
+.form-container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+label {
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: block;
+}
+
+select, input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* Table Styling */
+.employee-list table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    color: #1f3d5b;
+}
+
+.employee-list th, .employee-list td {
+    border: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.employee-list th {
+    background-color: #1f3d5b;
+    color: white;
+    font-weight: bold;
+}
+
+.employee-list tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Button Styling */
+button {
+    background-color: #0066CC;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 120px;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #004b8e;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .content {
+        margin-left: 220px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
 
     </style>
     <script>

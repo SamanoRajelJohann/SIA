@@ -12,6 +12,45 @@ addEmployee($conn);
     <link rel="stylesheet" href="css/add.css">
     <link rel="icon" type="image/png" href="img/LOGO.png">
 </head>
+<style>
+     /* Sidebar styling */
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            background-color: rgba(58, 74, 97, 0.9);
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar img {
+            border-radius: 10px; /* Add rounded corners to sidebar images */
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 15px;
+            margin-bottom: 15px;
+            text-align: left;
+            border-radius: 4px;
+            transition: background-color 0.3s ease, padding-left 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding-left: 25px;
+        }
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+</style>
 <body>
     <div class="sidebar">
         <img src="img/LOGO.png" alt="Logo" style="width: 100%; height: auto; margin-bottom: 20px;">
